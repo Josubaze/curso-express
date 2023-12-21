@@ -1,4 +1,5 @@
 const express = require('express');
+const { faker } = require('@faker-js/faker');
 const app = express();
 const port = 3000;
 
@@ -11,22 +12,24 @@ app.get('/contact-us', (req, res) => {
 });
 
 app.get('/products', (req, res) => {
-  res.json([
-  {
-    name: 'producto 1',
-    price: 500,
-  },
-  {
-    name: 'producto 2',
-    price: 600,
-  },
-  {
-    name: 'producto 3',
-    price: 450,
-  },
-  ])
+  const products = [];
+  const { size } = req.query;
+  const limit = size || 10;
+  for (let i = 0; i < limit; i++) {
+
+    products.push({
+      name: faker.commerce.productName(),
+      price: parseInt(faker.commerce.price(), 10),
+      image: faker.image.imageUrl(),
+    });
+  }
+  res.json(products);
 });
 
+app.get('/products/filter',(req, res)=>{ // este va por encima para que no se ejecute como el de abajo, se hace para darle prioridad.
+  res.send('Yo soy un filtro');
+})
+//Los endpoints(url) especificos deben declararsen antes de los endpoints dinamicos. Uno de los mandamientos.
 app.get('/products/:id',(req, res)=>{
   const { id } = req.params;
   res.json({
@@ -36,6 +39,9 @@ app.get('/products/:id',(req, res)=>{
   });
 })
 
+
+
+
 app.get('/categories/:categoriesId/products/:productId', (req, res)=>{
   const { categoriesId, productId } = req.params;
   res.json({
@@ -43,6 +49,21 @@ app.get('/categories/:categoriesId/products/:productId', (req, res)=>{
     productId,
   });
 });
+
+
+app.get('/users', (req, res) => {
+  const { limit, offset } = req.query
+  if (limit && offset) {
+    res.json({
+      limit,
+      offset,
+    })
+  }else{
+    res.send('no hay parametros');
+  }
+
+})
+
 
 app.listen(port, () => {
   console.log(`Mi port ${port}`);
