@@ -25,16 +25,23 @@ router.get('/filter',(req, res)=>{ // este va por encima para que no se ejecute 
 //Los endpoints(url) especificos deben declararsen antes de los endpoints dinamicos. Uno de los mandamientos.
 router.get('/:id',(req, res)=>{
   const { id } = req.params;
-  res.json({
-    id: id,
-    name: 'Product 2',
-    price: 600,
-  });
+  if(id === '111'){
+    res.status(200).json({
+      id: id,
+      name: 'Product 2',
+      price: 600,
+    });
+  }else{
+    res.status(404).json({
+      "message" : "NOT FOUND"
+    });
+  }
+
 })
 
 router.post('/', (req, res) =>{
   const body = req.body;
-  res.json({
+  res.status(201).json({
     "message" : 'created',
     "data" : body
   })

@@ -36,7 +36,8 @@ router.get('/', (req, res) => {
 
 router.get('/:id',(req, res)=>{
   const { id } = req.params;
-  res.json({
+  if(id === '000'){
+    res.status(200).json({
       userId: id,
       username: 'elFulano',
       email: '@example',
@@ -44,12 +45,18 @@ router.get('/:id',(req, res)=>{
       password: '123456',
       birthdate: faker.date.birthdate(),
       registeredAt: faker.date.past(),
-  });
+    });
+  }else{
+    res.status(404).json({
+      "message" : "not found"
+    });
+  }
+
 })
 
 router.post('/', (req, res) =>{
   const body = req.body;
-  res.json({
+  res.status(201).json({
     "message" : 'created',
     "data" : body
   })
