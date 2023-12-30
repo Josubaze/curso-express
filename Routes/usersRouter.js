@@ -1,7 +1,8 @@
 const express = require('express');
-const { faker } = require('@faker-js/faker');
+const userService = require('./../Services/userService')
 const router = express.Router();
 
+const service = new userService()
 // router.get('/', (req, res) => {
 //   const { limit, offset } = req.query
 //   if (limit && offset) {
@@ -16,78 +17,44 @@ const router = express.Router();
 // })
 
 router.get('/', (req, res) => {
-  const users = [];
-  const { size } = req.query;
-  const limit = size || 5;
-  for (let i = 0; i < limit; i++) {
-
-    users.push({
-      userId: faker.string.uuid(),
-      username: faker.internet.userName(),
-      email: faker.internet.email(),
-      avatar: faker.image.avatar(),
-      password: faker.internet.password(),
-      birthdate: faker.date.birthdate(),
-      registeredAt: faker.date.past(),
-    });
-  }
+  const users = service.find();
   res.json(users);
 });
 
 router.get('/:id',(req, res)=>{
   const { id } = req.params;
-  if(id === '000'){
-    res.status(200).json({
-      userId: id,
-      username: 'elFulano',
-      email: '@example',
-      avatar: faker.image.avatar(),
-      password: '123456',
-      birthdate: faker.date.birthdate(),
-      registeredAt: faker.date.past(),
-    });
+  const user = service.findOne(id);
+  if(user){
+    res.status(200).json(user);
   }else{
-    res.status(404).json({
-      "message" : "not found"
-    });
+    res.status(404).json(user);
   }
-
 })
 
 router.post('/', (req, res) =>{
   const body = req.body;
-  res.status(201).json({
-    "message" : 'created',
-    "data" : body
-  })
+  const newUser = service.create(body);
+  res.status(201).json(newUser);
 })
 
 router.put('/:userId', (req, res) =>{
   const body = req.body;
   const { userId } = req.params;
-  res.json({
-    "message" : 'update PUT',
-    "data" : body,
-    userId,
-  })
+  const user = service.update( userId , body )
+  res.json(user);
 })
 
 router.patch('/:userId', (req, res) =>{
   const body = req.body;
   const { userId } = req.params;
-  res.json({
-    "message" : 'update PATH',
-    "data" : body,
-    userId,
-  })
+  const user = service.update( userId , body )
+  res.json(user);
 })
 
 router.delete('/:userId', (req, res) =>{
   const { userId } = req.params;
-  res.json({
-    "message" : 'deleted',
-    userId,
-  })
+  const rts = service.delete( userId );
+  res.json(rts);
 })
 
 module.exports = router;

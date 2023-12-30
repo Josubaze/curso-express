@@ -1,50 +1,29 @@
 const express = require('express');
-const { faker } = require('@faker-js/faker');
+const ProductService = require('./../Services/productService');
 
 const router = express.Router();
+const service = new ProductService();
 
 router.get('/', (req, res) => {
-  const products = [];
-  const { size } = req.query;
-  const limit = size || 10;
-  for (let i = 0; i < limit; i++) {
-
-    products.push({
-      name: faker.commerce.productName(),
-      price: parseInt(faker.commerce.price(), 10),
-      image: faker.image.imageUrl(),
-    });
-  }
+  const products = service.find();
   res.json(products);
 });
-
-router.get('/filter',(req, res)=>{ // este va por encima para que no se ejecute como el de abajo, se hace para darle prioridad.
-  res.send('Yo soy un filtro');
-})
 
 //Los endpoints(url) especificos deben declararsen antes de los endpoints dinamicos. Uno de los mandamientos.
 router.get('/:id',(req, res)=>{
   const { id } = req.params;
-  if(id === '111'){
-    res.status(200).json({
-      id: id,
-      name: 'Product 2',
-      price: 600,
-    });
+  const product = service.findOne(id);
+  if(product){
+    res.status(200).json(product);
   }else{
-    res.status(404).json({
-      "message" : "NOT FOUND"
-    });
+    res.status(404).json(product);
   }
-
 })
 
 router.post('/', (req, res) =>{
   const body = req.body;
-  res.status(201).json({
-    "message" : 'created',
-    "data" : body
-  })
+  const newProduct = service.create(body);
+  res.status(201).json(newProduct)
 })
 
 router.put('/:id', (req, res) =>{
@@ -60,19 +39,14 @@ router.put('/:id', (req, res) =>{
 router.patch('/:id', (req, res) =>{
   const body = req.body;
   const { id } = req.params;
-  res.json({
-    "message" : 'update PATH',
-    "data" : body,
-    id,
-  })
+  const product = service.update(id, body);
+  res.json(product);
 })
 
 router.delete('/:id', (req, res) =>{
   const { id } = req.params;
-  res.json({
-    "message" : 'deleted',
-    id,
-  })
+  const rts = service.delete(id);
+  res.json(rts);
 })
 
 
