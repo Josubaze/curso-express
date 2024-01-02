@@ -16,14 +16,14 @@ const service = new userService()
 
 // })
 
-router.get('/', (req, res) => {
-  const users = service.find();
+router.get('/', async (req, res) => {
+  const users = await service.find();
   res.json(users);
 });
 
-router.get('/:id',(req, res)=>{
+router.get('/:id', async (req, res)=>{
   const { id } = req.params;
-  const user = service.findOne(id);
+  const user = await service.findOne(id);
   if(user){
     res.status(200).json(user);
   }else{
@@ -31,29 +31,36 @@ router.get('/:id',(req, res)=>{
   }
 })
 
-router.post('/', (req, res) =>{
+router.post('/', async (req, res) =>{
   const body = req.body;
-  const newUser = service.create(body);
+  const newUser = await service.create(body);
   res.status(201).json(newUser);
 })
 
-router.put('/:userId', (req, res) =>{
+router.put('/:userId', async (req, res) =>{
   const body = req.body;
   const { userId } = req.params;
-  const user = service.update( userId , body )
+  const user = await service.update( userId , body )
   res.json(user);
 })
 
-router.patch('/:userId', (req, res) =>{
-  const body = req.body;
-  const { userId } = req.params;
-  const user = service.update( userId , body )
-  res.json(user);
+router.patch('/:userId', async (req, res) =>{
+  try {
+    const body = req.body;
+    const { userId } = req.params;
+    const user = await service.update( userId , body )
+    res.json(user);
+
+  } catch (error) {
+    res.status(404).json({
+      message: error.message
+    });
+  }
 })
 
-router.delete('/:userId', (req, res) =>{
+router.delete('/:userId', async (req, res) =>{
   const { userId } = req.params;
-  const rts = service.delete( userId );
+  const rts = await service.delete( userId );
   res.json(rts);
 })
 

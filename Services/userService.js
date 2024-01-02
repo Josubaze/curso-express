@@ -22,7 +22,7 @@ class UserService{
     }
   }
 
-  create(data){
+  async create(data){
     const newUser = {
       id : faker.string.uuid(),
       ...data,
@@ -31,15 +31,19 @@ class UserService{
     return newUser;
   }
 
-  find(){
-    return this.users;
+  async find(){
+    return new Promise( (resolve, reject) => {
+      setTimeout( () => {
+        resolve(this.users);
+      }, 5000);
+    });
   }
 
-  findOne(id){
+  async findOne(id){
     return this.users.find( item => item.userId === id );
   }
 
-  update(id, change){
+  async update(id, change){
     const index = this.users.findIndex(item => item.userId === id);
     if(index === -1){
       throw new Error('No se ha encontrado ID');
@@ -52,7 +56,7 @@ class UserService{
     return this.users[index];
   }
 
-  delete(id){
+  async delete(id){
     const index = this.users.findIndex(item => item.userId === id);
     if(index === -1){
       throw new Error('No se ha encontrado ID');
