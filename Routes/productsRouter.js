@@ -10,13 +10,18 @@ router.get('/', async (req, res) => {
 });
 
 //Los endpoints(url) especificos deben declararsen antes de los endpoints dinamicos. Uno de los mandamientos.
-router.get('/:id', async (req, res)=>{
-  const { id } = req.params;
-  const product = await service.findOne(id);
-  if(product){
-    res.status(200).json(product);
-  }else{
-    res.status(404).json(product);
+router.get('/:id', async (req, res, next)=>{
+  try {
+    const { id } = req.params;
+    const product = await service.findOne(id);
+    if(product){
+      res.status(200).json(product);
+    }else{
+      res.status(404).json(product);
+    }
+
+  } catch (error) {
+    next(error);
   }
 })
 
