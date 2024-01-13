@@ -38,10 +38,17 @@ router.post('/', async (req, res) =>{
 })
 
 router.put('/:userId', async (req, res) =>{
-  const body = req.body;
-  const { userId } = req.params;
-  const user = await service.update( userId , body )
-  res.json(user);
+  try {
+    const body = req.body;
+    const { userId } = req.params;
+    const user = await service.update( userId , body )
+    res.json(user);
+
+  } catch (error) {
+    res.status(404).json({
+      message: error.message
+    });
+  }
 })
 
 router.patch('/:userId', async (req, res) =>{
