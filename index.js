@@ -13,7 +13,7 @@ app.use(express.json()); // para recibir data tipo json
 const whitelist = ['http://127.0.0.1:51980', 'http:://myappp.com'];
 const options = {
   origin: (origin, callback) => {
-    if(whitelist.includes(origin || !origin)){
+    if(whitelist.includes(origin) || !origin){
       callback(null, true);
     }else{
       callback(new Error('No permitido!'));
