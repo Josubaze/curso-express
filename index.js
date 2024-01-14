@@ -34,7 +34,7 @@ app.use(logError);
 app.use(boomErrorHandler);
 app.use(errorHandler);
 
-//ver puerto activo
+//ver puerto activo..
 app.listen(port, () => {
   console.log(`Mi port ${port}`);
 })
